@@ -13,6 +13,7 @@ import time
 def test_Can_Update_Midi_Port_Dropdown(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
+    """Test if the MIDI port dropdown menu updates correctly."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -43,6 +44,7 @@ def test_Can_Update_Midi_Port_Dropdown(
 def test_Can_React_To_Midi_Connection(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
+    """Test if the application reacts correctly to MIDI connection changes."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -77,7 +79,7 @@ def test_Can_React_To_Midi_Connection(
 def test_Can_Configure_Window(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
-    """Test window configuration settings"""
+    """Test window configuration settings."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -95,7 +97,7 @@ def test_Can_Configure_Window(
 def test_Can_Initialize_Midi_Manager(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
-    """Test MIDI manager initialization and port setup"""
+    """Test MIDI manager initialization and port setup."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -120,6 +122,7 @@ def test_Can_Initialize_Midi_Manager(
 def test_Can_Handle_Midi_Callback_Correct_Note(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
+    """Test handling of MIDI callback for a correct note."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -143,6 +146,7 @@ def test_Can_Handle_Midi_Callback_Correct_Note(
 def test_Can_Handle_Midi_Callback_Incorrect_Note(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
+    """Test handling of MIDI callback for an incorrect note."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value
@@ -166,6 +170,7 @@ def test_Can_Handle_Midi_Callback_Incorrect_Note(
 def test_Can_Update_Time_Label(
     mock_render_note_image: MagicMock, MockMidiPortManager: MagicMock
 ) -> None:
+    """Test if the time label updates correctly."""
     root: Tk = Tk()
     mock_render_note_image.return_value = PhotoImage()
     mock_midi_manager = MockMidiPortManager.return_value

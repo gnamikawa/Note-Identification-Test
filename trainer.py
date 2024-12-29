@@ -40,10 +40,12 @@ class NoteTrainer:
         self._show_random_note()
 
     def _clean_up_and_regenerate_notes(self) -> None:
+        """Clean up old MusicXML files and regenerate missing note images."""
         NoteImageManager.clean_up_musicxml_files()
         NoteImageManager.regenerate_missing_notes()
 
     def _initialize_ui(self) -> None:
+        """Initialize the user interface components."""
         self.available_ports = self.midi_manager.get_ports()
         tk.Label(self.master, text="Select MIDI Input Port:").pack()
         self.port_var: tk.StringVar = tk.StringVar(self.master)
@@ -75,12 +77,14 @@ class NoteTrainer:
         self._monitor_connection()
 
     def _update_time_label(self) -> None:
+        """Update the time label with the elapsed time since the timer started."""
         if self.timer.start_time is not None:
             elapsed_time = time.time() - self.timer.start_time
             self.time_label.config(text=f"Time Taken: {elapsed_time:.2f}s")
         self.master.after(10, self._update_time_label)
 
     def _select_initial_device(self) -> None:
+        """Select the initial MIDI device from the available ports."""
         if self.available_ports:
             self.selected_port = self.available_ports[0]
             self.port_var.set(
@@ -91,6 +95,11 @@ class NoteTrainer:
             self.selected_port = None
 
     def _on_select_midi_port(self, port: str) -> None:
+        """Handle the selection of a MIDI port and open it for input.
+
+        Args:
+            port (str): The name of the selected MIDI port.
+        """
         try:
             idx = self.available_ports.index(port)
             self.midi_manager.open_port(idx, self._midi_callback)
@@ -99,6 +108,12 @@ class NoteTrainer:
             messagebox.showerror("Error", "Selected port not found in list.")
 
     def _midi_callback(self, event: list[int], data: Optional[any] = None) -> None:
+        """Handle incoming MIDI messages and process note-on events.
+
+        Args:
+            event (list[int]): The MIDI event data.
+            data (Optional[any]): Additional data (unused).
+        """
         if not event or len(event) < 1:
             return
         message = event[0]
@@ -151,6 +166,7 @@ class NoteTrainer:
                 )
 
     def _monitor_connection(self) -> None:
+        """Monitor the MIDI connection status and update the UI accordingly."""
         current_ports = self.midi_manager.get_ports()
         current_state = bool(current_ports and self.midi_manager.is_port_open())
 
@@ -176,6 +192,7 @@ class NoteTrainer:
         self.master.after(500, self._monitor_connection)
 
     def _update_port_menu(self) -> None:
+        """Update the MIDI port selection menu with the current available ports."""
         menu = self.port_menu.children["menu"]
         menu.delete(0, "end")
         for port in self.available_ports:
@@ -189,12 +206,14 @@ class NoteTrainer:
         )
 
     def _populate_cache(self) -> None:
+        """Populate the cache with rendered note images."""
         for note in Config.NOTE_TO_MIDI.keys():
             image_path = NoteImageManager.get_image_path(note)
             if not os.path.isfile(image_path):
                 self.executor.submit(NoteImageManager.render_note_image, note)
 
     def _show_random_note_thread(self) -> None:
+        """Show a random note image in a separate thread."""
         # Select from tested notes only
         self.current_note = random.choice(list(Config.TESTED_NOTES.keys()))
         try:
@@ -213,11 +232,17 @@ class NoteTrainer:
         self._update_time_label()
 
     def _show_random_note(self) -> None:
+        """Start the timer and show a random note image."""
         self.timer.start()
         self.executor.submit(self._show_random_note_thread)
         self.executor.submit(self._show_random_note_thread)
 
     def _get_timestamp(self) -> str:
+        """Get the current timestamp as a formatted string.
+
+        Returns:
+            str: The current timestamp in 'YYYY-MM-DD HH:MM:SS' format.
+        """
         from datetime import datetime
 
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")

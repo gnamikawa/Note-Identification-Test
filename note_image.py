@@ -11,6 +11,14 @@ class NoteImageManager:
 
     @staticmethod
     def get_image_path(note_name: str) -> str:
+        """Get the file path for the note image.
+
+        Args:
+            note_name (str): The name of the note.
+
+        Returns:
+            str: The file path for the note image.
+        """
         if not os.path.exists(NoteImageManager.TEMP_DIR):
             os.makedirs(NoteImageManager.TEMP_DIR)
         return os.path.join(NoteImageManager.TEMP_DIR, f"{note_name}.png")
@@ -18,6 +26,14 @@ class NoteImageManager:
     @staticmethod
     @lru_cache(maxsize=128)
     def render_note_image(note_name: str) -> ImageTk.PhotoImage:
+        """Render the note image and return it as a PhotoImage.
+
+        Args:
+            note_name (str): The name of the note.
+
+        Returns:
+            ImageTk.PhotoImage: The rendered note image.
+        """
         try:
             image_path = NoteImageManager.get_image_path(note_name)
 
@@ -44,12 +60,14 @@ class NoteImageManager:
 
     @staticmethod
     def clean_up_musicxml_files() -> None:
+        """Clean up old MusicXML files and temporary images."""
         for file in os.listdir(NoteImageManager.TEMP_DIR):
             if file.endswith(".musicxml") or file.endswith("-1.png"):
                 os.remove(os.path.join(NoteImageManager.TEMP_DIR, file))
 
     @staticmethod
     def regenerate_missing_notes() -> None:
+        """Regenerate missing note images."""
         for note in Config.NOTE_TO_MIDI.keys():
             image_path = NoteImageManager.get_image_path(note)
             if not os.path.exists(image_path):
