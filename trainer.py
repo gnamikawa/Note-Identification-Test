@@ -114,7 +114,6 @@ class NoteTrainer:
 
         Args:
             event (list[int]): The MIDI event data.
-            data (Optional[any]): Additional data (unused).
         """
         if not event or len(event) < 1:
             return
