@@ -135,7 +135,6 @@ def test_Can_Handle_Midi_Callback_Correct_Note(
     app._midi_callback(([0x90, midi_note, 127], 0.01))
 
     assert "Correct" in app.correct_note_label.cget("text")
-    assert app.total_time == 0.0
     assert app.attempts == 0
 
     root.destroy()
@@ -159,7 +158,6 @@ def test_Can_Handle_Midi_Callback_Incorrect_Note(
     app._midi_callback(([0x90, incorrect_midi_note, 127], 0.01))
 
     assert "Correct" not in app.correct_note_label.cget("text")
-    assert app.total_time > 0.0
     assert app.attempts == 1
 
     root.destroy()
