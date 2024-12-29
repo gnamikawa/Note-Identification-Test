@@ -40,17 +40,6 @@ Best combined with a statistics visualization tool. Recommended for use with Gra
 4. Practice by playing the displayed notes on your MIDI keyboard
 5. Results are logged to a CSV file for tracking progress
 
-## Project Structure
-
-- [`main.py`](main.py) - Application entry point
-- [`trainer.py`](trainer.py) - Main application logic and UI
-- [`midi_manager.py`](midi_manager.py) - MIDI device handling
-- [`note_image.py`](note_image.py) - Musical notation rendering
-- [`config.py`](config.py) - Application configuration and note mappings
-- [`logger.py`](logger.py) - Performance logging to CSV
-- [`timer.py`](timer.py) - Time tracking utilities
-- [`test_trainer.py`](test_trainer.py) - Unit tests
-
 ## Testing
 
 Run the test suite using pytest:
