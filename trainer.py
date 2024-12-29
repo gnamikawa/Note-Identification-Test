@@ -9,7 +9,6 @@ from timer import Timer
 from ulid import ulid
 from concurrent.futures import ThreadPoolExecutor
 import os
-from PIL import Image, ImageTk
 import time
 from typing import Optional
 
@@ -110,7 +109,7 @@ class NoteTrainer:
         except ValueError:
             messagebox.showerror("Error", "Selected port not found in list.")
 
-    def _midi_callback(self, event: list[int], data: Optional[any] = None) -> None:
+    def _midi_callback(self, event: list[int]) -> None:
         """Handle incoming MIDI messages and process note-on events.
 
         Args:
