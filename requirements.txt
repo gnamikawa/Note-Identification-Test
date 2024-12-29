@@ -1,2 +1,4 @@
 python-rtmidi
 Pillow
+music21
+ulid-py
