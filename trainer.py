@@ -101,7 +101,7 @@ class NoteTrainer:
     def _midi_callback(self, event: list[int], data: Optional[any] = None) -> None:
         if not event or len(event) < 1:
             return
-        message = event
+        message = event[0]
         if (message[0] & 0xF0) == 0x90 and message[2] > 0:  # Note-On event
             midi_note = message[1]
             # Look up in full note range
