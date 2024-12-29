@@ -109,11 +109,12 @@ class NoteTrainer:
         except ValueError:
             messagebox.showerror("Error", "Selected port not found in list.")
 
-    def _midi_callback(self, event: list[int]) -> None:
+    def _midi_callback(self, event: list[int], data: Optional[object] = None) -> None:
         """Handle incoming MIDI messages and process note-on events.
 
         Args:
             event (list[int]): The MIDI event data.
+            data (Optional[object]): Additional data. Must be defined for the rtmidi_in.setCallback callback.
         """
         if not event or len(event) < 1:
             return
