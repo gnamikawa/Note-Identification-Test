@@ -238,7 +238,6 @@ class NoteTrainer:
         """Start the timer and show a random note image."""
         self.timer.start()
         self.executor.submit(self._show_random_note_thread)
-        self.executor.submit(self._show_random_note_thread)
 
     def _get_timestamp(self) -> str:
         """Get the current timestamp as a formatted string.
