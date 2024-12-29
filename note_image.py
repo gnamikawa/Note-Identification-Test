@@ -7,7 +7,7 @@ from config import Config
 
 
 class NoteImageManager:
-    TEMP_DIR = "temp_images"
+    TEMP_DIR = "note_cache"
 
     @staticmethod
     def get_image_path(note_name: str) -> str:
