@@ -10,14 +10,14 @@ class NoteImageManager:
     TEMP_DIR = "temp_images"
 
     @staticmethod
-    def get_image_path(note_name):
+    def get_image_path(note_name: str) -> str:
         if not os.path.exists(NoteImageManager.TEMP_DIR):
             os.makedirs(NoteImageManager.TEMP_DIR)
         return os.path.join(NoteImageManager.TEMP_DIR, f"{note_name}.png")
 
     @staticmethod
     @lru_cache(maxsize=128)
-    def render_note_image(note_name):
+    def render_note_image(note_name: str) -> ImageTk.PhotoImage:
         try:
             image_path = NoteImageManager.get_image_path(note_name)
 
@@ -42,13 +42,13 @@ class NoteImageManager:
             raise ValueError(f"The note '{note_name}' could not be rendered: {e}")
 
     @staticmethod
-    def clean_up_musicxml_files():
+    def clean_up_musicxml_files() -> None:
         for file in os.listdir(NoteImageManager.TEMP_DIR):
             if file.endswith(".musicxml") or file.endswith("-1.png"):
                 os.remove(os.path.join(NoteImageManager.TEMP_DIR, file))
 
     @staticmethod
-    def regenerate_missing_notes():
+    def regenerate_missing_notes() -> None:
         for note in Config.NOTE_TO_MIDI.keys():
             image_path = NoteImageManager.get_image_path(note)
             if not os.path.exists(image_path):

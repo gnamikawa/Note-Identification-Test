@@ -3,9 +3,9 @@ import os
 
 
 class CSVLogger:
-    def __init__(self, output_file):
-        self.output_file = output_file
-        self.headers = [
+    def __init__(self, output_file: str):
+        self.output_file: str = output_file
+        self.headers: list[str] = [
             "Timestamp",
             "Session ID",
             "Tested Note",
@@ -14,19 +14,26 @@ class CSVLogger:
         ]
         self.setup_csv()
 
-    def setup_csv(self):
+    def setup_csv(self) -> None:
         if (
             not os.path.isfile(self.output_file)
             or os.path.getsize(self.output_file) == 0
         ):
             self._write_headers()
 
-    def _write_headers(self):
+    def _write_headers(self) -> None:
         with open(self.output_file, mode="w", newline="") as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(self.headers)
 
-    def log_result(self, session_id, tested_note, guessed_note, time_taken, timestamp):
+    def log_result(
+        self,
+        session_id: str,
+        tested_note: str,
+        guessed_note: str,
+        time_taken: float,
+        timestamp: str,
+    ) -> None:
         if (
             not os.path.isfile(self.output_file)
             or os.path.getsize(self.output_file) == 0

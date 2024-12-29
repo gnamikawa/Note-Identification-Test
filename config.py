@@ -1,10 +1,10 @@
 class Config:
-    OUTPUT_CSV = (
+    OUTPUT_CSV: str = (
         r"\\wsl.localhost\Debian\home\genzo\system\monitoring-stack\static\results.csv"
     )
 
     # Notes that will be tested/displayed
-    TESTED_NOTES = {
+    TESTED_NOTES: dict[str, int] = {
         "C2": 36,
         "C#2": 37,
         "D2": 38,
@@ -57,7 +57,7 @@ class Config:
     }
 
     # All playable notes for input validation
-    NOTE_TO_MIDI = {
+    NOTE_TO_MIDI: dict[str, int] = {
         "A0": 21,
         "A#0": 22,
         "B0": 23,

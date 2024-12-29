@@ -11,46 +11,48 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 from PIL import Image, ImageTk
 import time
+from typing import Optional
 
 
 class NoteTrainer:
-    def __init__(self, master):
-        self.master = master
+    def __init__(self, master: tk.Tk):
+        self.master: tk.Tk = master
         self.master.title("Note Reading Trainer (rtmidi)")
         self.master.geometry("800x600")
         self.master.resizable(False, False)  # Make the UI unresizable
-        self.midi_manager = MidiPortManager()
-        self.logger = CSVLogger(Config.OUTPUT_CSV)
-        self.timer = Timer()
-        self.total_time = 0.0
-        self.attempts = 0
-        self.available_ports = self.midi_manager.get_ports()
-        self.status_label = None
-        self.last_connection_state = None
-        self.selected_port = None
-        self.session_id = None
-        self.executor = ThreadPoolExecutor(max_workers=os.cpu_count())
+        self.midi_manager: MidiPortManager = MidiPortManager()
+        self.logger: CSVLogger = CSVLogger(Config.OUTPUT_CSV)
+        self.timer: Timer = Timer()
+        self.total_time: float = 0.0
+        self.attempts: int = 0
+        self.available_ports: list[str] = self.midi_manager.get_ports()
+        self.status_label: Optional[tk.Label] = None
+        self.last_connection_state: Optional[bool] = None
+        self.selected_port: Optional[str] = None
+        self.session_id: Optional[str] = None
+        self.executor: ThreadPoolExecutor = ThreadPoolExecutor(
+            max_workers=os.cpu_count()
+        )
         self._clean_up_and_regenerate_notes()
         self._initialize_ui()
         self._select_initial_device()
         self._populate_cache()
         self._show_random_note()
 
-    def _clean_up_and_regenerate_notes(self):
+    def _clean_up_and_regenerate_notes(self) -> None:
         NoteImageManager.clean_up_musicxml_files()
         NoteImageManager.regenerate_missing_notes()
 
-    def _initialize_ui(self):
+    def _initialize_ui(self) -> None:
         tk.Label(self.master, text="Select MIDI Input Port:").pack()
-        self.port_var = tk.StringVar(self.master)
+        self.port_var: tk.StringVar = tk.StringVar(self.master)
         self.port_var.set(
             self.available_ports[0] if self.available_ports else "No Ports Available"
         )
-        self.port_menu = tk.OptionMenu(
+        self.port_menu: tk.OptionMenu = tk.OptionMenu(
             self.master,
             self.port_var,
             *self.available_ports if self.available_ports else ["No Ports Available"],
-            command=self._on_select_midi_port,
         )
         self.port_menu.pack(pady=5)
         self.status_label = tk.Label(
@@ -59,33 +61,33 @@ class NoteTrainer:
         self.status_label.pack(pady=5)
 
         # Add a frame to contain the note image
-        self.note_frame = tk.Frame(self.master)
+        self.note_frame: tk.Frame = tk.Frame(self.master)
         self.note_frame.pack(pady=20, expand=True, fill="both")
 
-        self.note_label = tk.Label(self.note_frame)
+        self.note_label: tk.Label = tk.Label(self.note_frame)
         self.note_label.pack(expand=True)
 
-        self.time_label = tk.Label(self.master, text="Time Taken: 0.000s")
+        self.time_label: tk.Label = tk.Label(self.master, text="Time Taken: 0.000s")
         self.time_label.pack(pady=5)
-        self.correct_note_label = tk.Label(self.master, text="")
+        self.correct_note_label: tk.Label = tk.Label(self.master, text="")
         self.correct_note_label.pack(pady=5)
         tk.Button(self.master, text="Next Note", command=self._show_random_note).pack(
             pady=10
         )
         self._monitor_connection()
 
-    def _update_time_label(self):
+    def _update_time_label(self) -> None:
         if self.timer.start_time is not None:
             elapsed_time = time.time() - self.timer.start_time
             self.time_label.config(text=f"Time Taken: {elapsed_time:.2f}s")
         self.master.after(10, self._update_time_label)
 
-    def _select_initial_device(self):
+    def _select_initial_device(self) -> None:
         if self.available_ports:
             self.selected_port = self.available_ports[0]
             self._on_select_midi_port(self.selected_port)
 
-    def _on_select_midi_port(self, port):
+    def _on_select_midi_port(self, port: str) -> None:
         try:
             idx = self.available_ports.index(port)
             self.midi_manager.open_port(idx, self._midi_callback)
@@ -93,7 +95,7 @@ class NoteTrainer:
         except ValueError:
             messagebox.showerror("Error", "Selected port not found in list.")
 
-    def _midi_callback(self, event, data=None):
+    def _midi_callback(self, event: list[int], data: Optional[any] = None) -> None:
         if not event or len(event) < 1:
             return
         message, _ = event
@@ -144,7 +146,7 @@ class NoteTrainer:
                     f"Incorrect. Played {midi_note}, Expected {Config.NOTE_TO_MIDI.get(self.current_note)}"
                 )
 
-    def _monitor_connection(self):
+    def _monitor_connection(self) -> None:
         current_ports = self.midi_manager.get_ports()
         current_state = bool(current_ports and self.midi_manager.is_port_open())
 
@@ -169,7 +171,7 @@ class NoteTrainer:
 
         self.master.after(500, self._monitor_connection)
 
-    def _update_port_menu(self):
+    def _update_port_menu(self) -> None:
         menu = self.port_menu.children["menu"]
         menu.delete(0, "end")
         for port in self.available_ports:
@@ -182,13 +184,13 @@ class NoteTrainer:
             else "No Ports Available"
         )
 
-    def _populate_cache(self):
+    def _populate_cache(self) -> None:
         for note in Config.NOTE_TO_MIDI.keys():
             image_path = NoteImageManager.get_image_path(note)
             if not os.path.isfile(image_path):
                 self.executor.submit(NoteImageManager.render_note_image, note)
 
-    def _show_random_note_thread(self):
+    def _show_random_note_thread(self) -> None:
         # Select from tested notes only
         self.current_note = random.choice(list(Config.TESTED_NOTES.keys()))
         try:
@@ -206,10 +208,10 @@ class NoteTrainer:
         self.time_label.config(text="Time Taken: 0.000s")
         self._update_time_label()
 
-    def _show_random_note(self):
+    def _show_random_note(self) -> None:
         self.executor.submit(self._show_random_note_thread)
 
-    def _get_timestamp(self):
+    def _get_timestamp(self) -> str:
         from datetime import datetime
 
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
