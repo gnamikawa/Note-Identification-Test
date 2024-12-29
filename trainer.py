@@ -52,10 +52,13 @@ class NoteTrainer:
         self.port_var.set(
             self.available_ports[0] if self.available_ports else "No Ports Available"
         )
+        available_ports_list = (
+            self.available_ports
+            if len(self.available_ports) > 0
+            else ["No Ports Available"]
+        )
         self.port_menu: tk.OptionMenu = tk.OptionMenu(
-            self.master,
-            self.port_var,
-            *self.available_ports if self.available_ports else ["No Ports Available"],
+            self.master, self.port_var, *available_ports_list
         )
         self.port_menu.pack()  # Ensure the port_menu is packed into the UI
         # Add a frame to contain the note image
