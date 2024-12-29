@@ -2,14 +2,14 @@
 
 A Python application to help musicians practice note reading using a MIDI keyboard.
 
+Best combined with a statistics visualization tool. Recommended for use with Grafana. Anything that supports CSV should be compatible.
+
 ## Features
 
 - Real-time MIDI input detection
 - Visual note display using musical notation
-- Performance tracking and logging
-- Multiple octave range support (A0-C8)
+- Success rate tracking and logging
 - Automatic MIDI device detection and connection
-- Session-based practice tracking
 
 ## Requirements
 
