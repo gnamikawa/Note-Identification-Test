@@ -25,7 +25,7 @@ class NoteTrainer:
         self.timer: Timer = Timer()
         self.total_time: float = 0.0
         self.attempts: int = 0
-        self.available_ports: list[str] = self.midi_manager.get_ports()
+        self.available_ports: list[str] = []
         self.status_label: Optional[tk.Label] = None
         self.last_connection_state: Optional[bool] = None
         self.selected_port: Optional[str] = None
@@ -44,6 +44,7 @@ class NoteTrainer:
         NoteImageManager.regenerate_missing_notes()
 
     def _initialize_ui(self) -> None:
+        self.available_ports = self.midi_manager.get_ports()
         tk.Label(self.master, text="Select MIDI Input Port:").pack()
         self.port_var: tk.StringVar = tk.StringVar(self.master)
         self.port_var.set(
@@ -54,12 +55,7 @@ class NoteTrainer:
             self.port_var,
             *self.available_ports if self.available_ports else ["No Ports Available"],
         )
-        self.port_menu.pack(pady=5)
-        self.status_label = tk.Label(
-            self.master, text="Status: Disconnected", fg="red", width=20
-        )
-        self.status_label.pack(pady=5)
-
+        self.port_menu.pack()  # Ensure the port_menu is packed into the UI
         # Add a frame to contain the note image
         self.note_frame: tk.Frame = tk.Frame(self.master)
         self.note_frame.pack(pady=20, expand=True, fill="both")
@@ -71,6 +67,8 @@ class NoteTrainer:
         self.time_label.pack(pady=5)
         self.correct_note_label: tk.Label = tk.Label(self.master, text="")
         self.correct_note_label.pack(pady=5)
+        self.status_label = tk.Label(self.master, text="Status: Disconnected", fg="red")
+        self.status_label.pack(pady=5)
         tk.Button(self.master, text="Next Note", command=self._show_random_note).pack(
             pady=10
         )
@@ -85,7 +83,12 @@ class NoteTrainer:
     def _select_initial_device(self) -> None:
         if self.available_ports:
             self.selected_port = self.available_ports[0]
+            self.port_var.set(
+                self.selected_port
+            )  # Update port_var to the first available port
             self._on_select_midi_port(self.selected_port)
+        else:
+            self.selected_port = None
 
     def _on_select_midi_port(self, port: str) -> None:
         try:
@@ -98,7 +101,7 @@ class NoteTrainer:
     def _midi_callback(self, event: list[int], data: Optional[any] = None) -> None:
         if not event or len(event) < 1:
             return
-        message, _ = event
+        message = event
         if (message[0] & 0xF0) == 0x90 and message[2] > 0:  # Note-On event
             midi_note = message[1]
             # Look up in full note range
@@ -142,6 +145,7 @@ class NoteTrainer:
                 self.correct_note_label.config(
                     text="",
                 )
+                self.total_time += time_taken  # Update total time for incorrect note
                 print(
                     f"Incorrect. Played {midi_note}, Expected {Config.NOTE_TO_MIDI.get(self.current_note)}"
                 )
@@ -209,6 +213,8 @@ class NoteTrainer:
         self._update_time_label()
 
     def _show_random_note(self) -> None:
+        self.timer.start()
+        self.executor.submit(self._show_random_note_thread)
         self.executor.submit(self._show_random_note_thread)
 
     def _get_timestamp(self) -> str:

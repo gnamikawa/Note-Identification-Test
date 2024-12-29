@@ -29,7 +29,8 @@ class NoteImageManager:
 
                 # Rename the generated file to the desired name
                 generated_image_path = image_path.replace(".png", "-1.png")
-                os.rename(generated_image_path, image_path)
+                if os.path.exists(generated_image_path):
+                    os.rename(generated_image_path, image_path)
 
                 # Delete the musicxml file
                 musicxml_path = image_path.replace(".png", ".musicxml")
