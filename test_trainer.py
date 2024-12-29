@@ -132,7 +132,7 @@ def test_Can_Handle_Midi_Callback_Correct_Note(
     app.current_note = random.choice(list(Config.TESTED_NOTES.keys()))
     midi_note = Config.TESTED_NOTES[app.current_note]
 
-    app._midi_callback([0x90, midi_note, 127])
+    app._midi_callback(([0x90, midi_note, 127], 0.01))
 
     assert "Correct" in app.correct_note_label.cget("text")
     assert app.total_time == 0.0
@@ -156,7 +156,7 @@ def test_Can_Handle_Midi_Callback_Incorrect_Note(
     app.current_note = random.choice(list(Config.TESTED_NOTES.keys()))
     incorrect_midi_note = (Config.TESTED_NOTES[app.current_note] + 1) % 128
 
-    app._midi_callback([0x90, incorrect_midi_note, 127])
+    app._midi_callback(([0x90, incorrect_midi_note, 127], 0.01))
 
     assert "Correct" not in app.correct_note_label.cget("text")
     assert app.total_time > 0.0
